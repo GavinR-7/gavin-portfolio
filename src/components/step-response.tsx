@@ -2,6 +2,8 @@
 
 import { useEffect, useRef } from "react";
 
+import { STEP_AT, stepResponse } from "@/lib/step-response";
+
 /**
  * The signature element: a second-order system's step response.
  *
@@ -16,21 +18,8 @@ import { useEffect, useRef } from "react";
  *   - no canvas  → nothing happens and the hero is unaffected
  */
 
-/** ζ — damping ratio. 0.28 overshoots ~40% and rings twice before settling. */
-const ZETA = 0.28;
-/** ωₙ — natural frequency. Tuned so two rings fit across the width. */
-const OMEGA_N = 14;
-/** Where along the width the step input arrives. */
-const STEP_AT = 0.14;
+/** One sweep, then it stops. */
 const SWEEP_MS = 1500;
-
-/** Unit step response of an underdamped second-order system. y(0) = 0. */
-function stepResponse(t: number): number {
-  if (t <= 0) return 0;
-  const damped = Math.sqrt(1 - ZETA * ZETA);
-  const decay = Math.exp(-ZETA * OMEGA_N * t) / damped;
-  return 1 - decay * Math.sin(OMEGA_N * damped * t + Math.acos(ZETA));
-}
 
 export function StepResponse() {
   const canvasRef = useRef<HTMLCanvasElement>(null);

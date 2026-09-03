@@ -120,7 +120,7 @@ bright LED version of the same hue.
 
 ## Type
 
-**Archivo (variable) + IBM Plex Mono.** Two font files for the entire site.
+**Archivo (variable) + IBM Plex Mono.** Two font files, ~98KB, for the entire site.
 
 The display face and the body face are the *same family at different widths*.
 Archivo ships a `wdth` variable axis; `next/font` pulls it in via `axes: ["wdth"]`,
@@ -133,8 +133,17 @@ download — verified in the build output as `font-stretch: 62% 125%` on the
 IBM Plex Mono carries the instrument-label voice: eyebrows, badges, spec rows and
 figure captions, via the `label-face` utility.
 
+Plex Mono ships **one weight**. `next/font` preloads every declared weight on every
+route, so carrying a 400 that only inline code in a single post uses would have put
+~19KB on the critical path of pages that never render it.
+
 Both are self-hosted by `next/font` with `display: swap` and latin subsetting. No
 network request to a font CDN, so no third-party connection on the critical path.
+
+The honest tradeoff: the Archivo variable file is 88KB — larger than a single static
+weight, because it carries the full `wght` (100–900) and `wdth` (62–125) ranges. It's
+still smaller than the three or four static faces it replaces, it's cached across
+every route, and it's the asset the whole type system depends on.
 
 ---
 
@@ -220,3 +229,73 @@ immediately. The canvas is `aria-hidden` and the hero is complete without it.
 
 Three client components exist site-wide: the theme toggle, the step response, and
 the copy-email button. Everything else is a server component and ships no JS.
+
+
+---
+
+## Social cards
+
+`src/lib/og.tsx` renders every OG image at build time through `next/og`.
+
+`ImageResponse` takes JSX and rasterises it with **Satori**, a small layout engine
+that understands a subset of flexbox and nothing else. That constrains the code in
+two ways worth knowing before reading the file: there is no stylesheet, so every
+style is an inline object and the theme tokens are restated as literals; and fonts
+must be handed over as raw bytes, which is why `src/assets/fonts/` holds three WOFF
+files committed to the repo. Fetching them at build time would have made the build
+depend on a network round trip to Google.
+
+Each route gets its card from a co-located `opengraph-image.tsx`:
+
+| File | Card |
+|---|---|
+| `app/opengraph-image.tsx` | Homepage — name and positioning from `site.config.ts` |
+| `app/projects/[slug]/opengraph-image.tsx` | Per case study, from its frontmatter |
+| `app/writing/[slug]/opengraph-image.tsx` | Per post, from its frontmatter |
+
+Nothing is designed by hand, so a card cannot drift from the page it represents —
+change a summary in frontmatter and the card changes with it. The trace on the card
+is drawn by `stepResponseSvg()`, the same function the hero canvas uses, so the
+social preview carries literally the same curve rather than a redrawing of it.
+
+Satori has no `line-clamp`, so summaries are trimmed on a word boundary by
+`truncate()` before they reach the layout.
+
+---
+
+## Structured data
+
+JSON-LD, one block per page type, built in `src/lib/schema.ts` from the same typed
+content the page renders.
+
+| Page | Type | Why |
+|---|---|---|
+| `/` | `Person` | The site is found by searching a name. This is what turns that string into an entity with an affiliation, a location and known profiles |
+| `/projects/[slug]` | `CreativeWork` | A case study is a work *about* a thing that exists at `liveUrl` — `sameAs` points there |
+| `/writing/[slug]` | `BlogPosting` | Author, publish date, canonical URL |
+
+The rule the whole thing lives under: **structured data must describe what a human
+can actually see on the page.** Claiming more than the page shows is spam, and search
+engines treat it as such. Every field here has a visible counterpart.
+
+---
+
+## Performance
+
+Measured on the production build, gzipped:
+
+| | |
+|---|---|
+| HTML per route | 6.3–9.2 KB |
+| First-load JS (modern browser) | ~138 KB |
+| — our own client components | 7.1 KB |
+| Fonts | 98 KB (2 files, cached across all routes) |
+| Polyfills chunk | 39 KB, `noModule` — never downloaded by a modern browser |
+
+Three client components exist site-wide: the theme toggle, the step-response trace,
+and the copy-email button. Every other component is a server component and ships no
+JavaScript. MDX is compiled and rendered on the server, so a case study page ships
+the same JS as an empty one.
+
+The ~138 KB is the Next 16 App Router and React 19 floor, not something this site
+adds to. What's controllable is how little of it is ours.

@@ -1,36 +1,108 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# gavinr.dev
 
-## Getting Started
+Personal engineering portfolio for Gavin Reis — Cornell ECE.
 
-First, run the development server:
+Static Next.js site. Content is MDX files in this repo, validated by zod at build
+time. No database, no CMS, no auth.
+
+**Live:** https://gavinr.dev
+
+---
+
+## Running it
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+npm install
+npm run dev          # http://localhost:3000
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+| Script | |
+|---|---|
+| `npm run dev` | Dev server |
+| `npm run build` | Production build — fails on invalid content frontmatter |
+| `npm run typecheck` | `tsc --noEmit` |
+| `npm run lint` | ESLint |
+| `npm run format` | Prettier, with Tailwind class sorting |
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+---
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## Adding content
 
-## Learn More
+Create one MDX file. Nothing else.
 
-To learn more about Next.js, take a look at the following resources:
+**A case study** — `content/projects/<slug>.mdx`:
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+```yaml
+---
+title: Project Name
+slug: project-name
+lane: client            # client | lab
+status: shipped         # shipped | prototype | building | design
+role: Design & build
+stack: ["Next.js", "TypeScript (strict)"]
+liveUrl: https://example.com/
+summary: One honest sentence for the card.
+publishedAt: 2026-09-03
+caseStudy: true         # false = card and live link only, no page
+featured: true          # appears on the homepage
+draft: false            # true = hidden in production builds
+order: 1
+---
+```
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+**A post** — `content/writing/<slug>.mdx`: `title`, `slug`, `summary`,
+`publishedAt`, `readingTime`, `draft`.
 
-## Deploy on Vercel
+The frontmatter is validated by a zod schema in `src/lib/content.ts`. A missing or
+malformed field fails `next build` with the file name and the field name, so bad
+content can't reach production.
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+Two flags do the gating, and they're independent:
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+- **`status`** — is there something to show?
+- **`draft`** — am I allowed to show it? Drafts render in `next dev` and are stripped
+  from production builds.
+
+`caseStudy: false` means the project gets a card linking straight to its live site
+and no page is generated — used when a project has no outcome to write an ending on.
+
+---
+
+## Structure
+
+```
+content/            MDX — projects and writing
+src/
+  app/              Routes, sitemap, robots, OG images, icons
+  components/       UI
+  lib/
+    content.ts      MDX loader + zod schemas
+    schema.ts       JSON-LD builders
+    og.tsx          Social card renderer
+    step-response.ts  The hero curve — shared by the canvas and the OG cards
+  assets/fonts/     WOFF files for OG rendering (Satori needs raw bytes)
+  site.config.ts    Every fact that appears more than once
+```
+
+`ARCHITECTURE.md` explains the theming system, the content pipeline, the signature
+element and the performance numbers. `BUILD_NOTES.md` is the build log.
+
+---
+
+## Notable bits
+
+- **Dark mode** is class-based via a redefined Tailwind v4 `dark:` variant plus a
+  blocking inline script, so there's no flash on reload. Colour utilities are
+  themeable because tokens go through `@theme inline`.
+- **The hero trace** is the step response of an underdamped second-order system,
+  hand-written canvas, ~30 lines of math. It plays once and stops. The axis line is
+  CSS so the figure survives with JavaScript disabled.
+- **OG cards** are generated per page from frontmatter by `next/og`, using the same
+  curve function as the hero.
+- **Null means "doesn't exist yet."** `site.config.ts` gates the résumé link and the
+  view-source link on the thing they point at existing, so a dead link is
+  structurally impossible rather than a QA item.
+
+---
+
+Built with Next.js 16, TypeScript, Tailwind v4. Deployed on Vercel.

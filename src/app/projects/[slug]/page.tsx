@@ -3,9 +3,11 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 
 import { ExternalLink } from "@/components/external-link";
+import { JsonLd } from "@/components/json-ld";
 import { MdxContent } from "@/components/mdx-content";
 import { StatusBadge } from "@/components/status-badge";
 import { getCaseStudies, getProject } from "@/lib/content";
+import { caseStudySchema } from "@/lib/schema";
 import { siteConfig } from "@/site.config";
 
 type Params = { params: Promise<{ slug: string }> };
@@ -27,6 +29,12 @@ export async function generateMetadata({ params }: Params): Promise<Metadata> {
     title: entry.meta.title,
     description: entry.meta.summary,
     alternates: { canonical: `/projects/${slug}` },
+    openGraph: {
+      type: "article",
+      title: entry.meta.title,
+      description: entry.meta.summary,
+      url: `${siteConfig.url}/projects/${slug}`,
+    },
   };
 }
 
@@ -41,6 +49,7 @@ export default async function CaseStudyPage({ params }: Params) {
 
   return (
     <article className="mx-auto max-w-3xl px-5 py-16 sm:px-8 sm:py-24">
+      <JsonLd data={caseStudySchema(meta)} />
       <Link
         href="/projects"
         className="label-face text-muted hover:text-signal underline-offset-4 hover:underline"

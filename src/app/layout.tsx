@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { Analytics } from "@vercel/analytics/next";
 import { Archivo, IBM_Plex_Mono } from "next/font/google";
 
 import { SiteFooter } from "@/components/site-footer";
@@ -20,21 +21,47 @@ const archivo = Archivo({
   variable: "--font-archivo",
 });
 
-/** The instrument-label voice: eyebrows, badges, spec rows, figure captions. */
+/**
+ * The instrument-label voice: eyebrows, badges, spec rows, figure captions.
+ *
+ * One weight only. next/font preloads every declared weight on every route, so
+ * shipping a 400 that only inline code in one post uses would put ~19KB on the
+ * critical path of pages that never render it.
+ */
 const plexMono = IBM_Plex_Mono({
   subsets: ["latin"],
-  weight: ["400", "500"],
+  weight: ["500"],
   display: "swap",
   variable: "--font-plex-mono",
 });
 
+const defaultTitle = `${siteConfig.identity.name} — ${siteConfig.identity.discipline}`;
+
 export const metadata: Metadata = {
   metadataBase: new URL(siteConfig.url),
   title: {
-    default: `${siteConfig.identity.name} — ${siteConfig.identity.discipline}`,
+    default: defaultTitle,
     template: `%s — ${siteConfig.identity.name}`,
   },
   description: siteDescription,
+  alternates: { canonical: "/" },
+  // Every page inherits these; per-page metadata overrides title, description
+  // and canonical. The OG image comes from the co-located opengraph-image.tsx
+  // files, so it is never set by hand here.
+  openGraph: {
+    type: "website",
+    siteName: siteConfig.identity.name,
+    locale: "en_US",
+    url: siteConfig.url,
+    title: defaultTitle,
+    description: siteDescription,
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: defaultTitle,
+    description: siteDescription,
+  },
+  robots: { index: true, follow: true },
 };
 
 /**
@@ -51,6 +78,12 @@ try {
   var dark = stored ? stored === "dark" : matchMedia("(prefers-color-scheme: dark)").matches;
   document.documentElement.classList.toggle("dark", dark);
 } catch (e) {}
+console.log(
+  "%cThe hero trace is a second-order step response — \u03b6=0.28, \u03c9\u2099=14.%c\n" +
+    ${JSON.stringify(siteConfig.links.repo ?? "")},
+  "color:#f0a93c;font-weight:600",
+  "color:inherit",
+);
 `;
 
 export default function RootLayout({
@@ -78,6 +111,10 @@ export default function RootLayout({
           </main>
           <SiteFooter />
         </div>
+
+        {/* Gated on the config flag: nothing loads until the production deploy
+            exists and the flag is flipped, so local runs stay analytics-free. */}
+        {siteConfig.analytics ? <Analytics /> : null}
       </body>
     </html>
   );

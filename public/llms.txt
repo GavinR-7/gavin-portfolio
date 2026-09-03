@@ -1,0 +1,39 @@
+# Gavin Reis
+
+> Electrical & Computer Engineering at Cornell. I design systems end to end and
+> put them in front of real users.
+
+Personal engineering portfolio. Static site, no tracking beyond privacy-friendly
+page analytics. Everything here is real: every project links to something running,
+and work that isn't deployed is listed as in-progress rather than written up.
+
+## Projects
+
+- [John Savoretti Realty](https://gavinr.dev/projects/john-savoretti-realty):
+  Production site for a two-office Long Island brokerage. Residential, rental and
+  commercial listings share one typed pipeline built on TypeScript discriminated
+  unions. Live: https://john-savoretti-realty.vercel.app/
+- [GC Kuts](https://gavinr.dev/projects/gc-kuts): Mobile-first site for an
+  independent barber whose funnel runs through Instagram.
+  Live: https://gckuts-site.vercel.app/
+- Above All Tents: First site designed, built, shipped and sold end to end.
+  Live: https://abovealltents.com/
+- The Ledger: Prototype exploring how to present reporting without editorial
+  slant. Runs on sample articles, not live news.
+  Live: https://the-ledger-ashen.vercel.app/
+
+## In progress (no deployment yet)
+
+- Canvas Course Archiver — archives Cornell Canvas courses into a queryable manifest
+- ECE Course Tutor — retrieval-augmented tutor over that archive, with citations
+- PDF Reader — reads a PDF aloud with the current sentence highlighted
+- Inkline — handwriting-to-text with a CER/WER eval harness as the release gate
+- AI legal triage — jurisdiction-aware legal information tool, gated on escalation-recall evals
+
+## Writing
+
+- [Designing a multi-area listings model with discriminated unions](https://gavinr.dev/writing/typed-listings-discriminated-unions)
+
+## Contact
+
+gjr74@cornell.edu · https://github.com/GavinR-7 · https://www.linkedin.com/in/gavinreis

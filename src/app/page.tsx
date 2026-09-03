@@ -1,12 +1,14 @@
 import Link from "next/link";
 
 import { ContactBand } from "@/components/contact-band";
+import { JsonLd } from "@/components/json-ld";
 import { Figure } from "@/components/figure";
 import { ProjectCard } from "@/components/project-card";
 import { StatusBadge } from "@/components/status-badge";
 import { StepResponse } from "@/components/step-response";
 import { getProjects } from "@/lib/content";
 import { labEntries, labFraming } from "@/lib/lab";
+import { personSchema } from "@/lib/schema";
 import { siteConfig } from "@/site.config";
 
 export default function HomePage() {
@@ -15,6 +17,7 @@ export default function HomePage() {
 
   return (
     <>
+      <JsonLd data={personSchema()} />
       {/* Hero. Everything a first-time reader needs is above the trace: who,
           what, and proof one scroll below. The trace is the only motion. */}
       <section className="mx-auto max-w-5xl px-5 pt-16 pb-4 sm:px-8 sm:pt-24">

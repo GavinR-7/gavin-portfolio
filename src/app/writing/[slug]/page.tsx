@@ -2,8 +2,10 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 
+import { JsonLd } from "@/components/json-ld";
 import { MdxContent } from "@/components/mdx-content";
 import { getPost, getPosts } from "@/lib/content";
+import { articleSchema } from "@/lib/schema";
 import { siteConfig } from "@/site.config";
 
 type Params = { params: Promise<{ slug: string }> };
@@ -21,6 +23,13 @@ export async function generateMetadata({ params }: Params): Promise<Metadata> {
     title: entry.meta.title,
     description: entry.meta.summary,
     alternates: { canonical: `/writing/${slug}` },
+    openGraph: {
+      type: "article",
+      title: entry.meta.title,
+      description: entry.meta.summary,
+      url: `${siteConfig.url}/writing/${slug}`,
+      publishedTime: entry.meta.publishedAt.toISOString(),
+    },
   };
 }
 
@@ -40,6 +49,7 @@ export default async function PostPage({ params }: Params) {
 
   return (
     <article className="mx-auto max-w-3xl px-5 py-16 sm:px-8 sm:py-24">
+      <JsonLd data={articleSchema(meta)} />
       <Link
         href="/writing"
         className="label-face text-muted hover:text-signal underline-offset-4 hover:underline"
