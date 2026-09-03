@@ -5,11 +5,13 @@ import { Figure } from "@/components/figure";
 import { ProjectCard } from "@/components/project-card";
 import { StatusBadge } from "@/components/status-badge";
 import { StepResponse } from "@/components/step-response";
-import { featuredProjects, labEntries, labFraming } from "@/lib/projects";
+import { getProjects } from "@/lib/content";
+import { labEntries, labFraming } from "@/lib/lab";
 import { siteConfig } from "@/site.config";
 
 export default function HomePage() {
   const { identity, positioning, contact } = siteConfig;
+  const featured = getProjects().filter((entry) => entry.meta.featured);
 
   return (
     <>
@@ -54,8 +56,8 @@ export default function HomePage() {
 
       <Figure number="01" title="Selected work">
         <div className="grid gap-4 sm:grid-cols-2">
-          {featuredProjects.map((project) => (
-            <ProjectCard key={project.slug} project={project} />
+          {featured.map((entry) => (
+            <ProjectCard key={entry.meta.slug} project={entry.meta} />
           ))}
         </div>
         <Link

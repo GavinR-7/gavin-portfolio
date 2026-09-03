@@ -1,0 +1,94 @@
+---
+title: GC Kuts
+slug: gc-kuts
+lane: client
+status: shipped
+client: Giancarlo Colombo
+role: Design & build
+stack: ["Next.js", "TypeScript (strict)", "Tailwind v4", "Vercel"]
+liveUrl: https://gckuts-site.vercel.app/
+summary: An independent barber in Smithtown whose entire funnel runs through Instagram. Mobile-first, where load speed and the path to a booking are the whole game.
+outcomeLine: A site that does one job — turn an Instagram visitor into a booking.
+publishedAt: 2026-09-03
+caseStudy: true
+featured: false
+draft: false
+order: 3
+---
+
+## Context
+
+Giancarlo Colombo is an independent barber in Smithtown, New York. His business runs
+on Instagram: people find him there, they judge the work from photos, and then they
+try to book. That last step is where a lot of independent operators lose people —
+the link in bio goes somewhere generic, or somewhere slow, or somewhere that asks a
+phone to render a desktop layout.
+
+So the brief wasn't "a barbershop website." It was: a person is standing on a train
+platform, they just tapped a link in an Instagram profile, and they have about four
+seconds of patience. Get them to a booking.
+
+## How the deal was structured
+
+Worth stating plainly, because the framing is part of the work: this was a portfolio
+case study engagement. A deliberately scoped build for a warm contact, exchanged for
+a testimonial, portfolio rights and a referral rather than a full fee.
+
+That wasn't undercharging — it was pricing to what the engagement was actually worth
+to me at that moment, which was proof and distribution rather than cash. Scoping it
+tightly was part of the same decision: a smaller build I could finish well beats a
+larger one I'd be apologising for.
+
+I'd rather show that reasoning than hide it. Knowing what a project is *for* before
+quoting it is most of what separates a sustainable practice from a stressful one.
+
+## Constraints
+
+- Mobile is not the primary case, it is effectively the only case. Nearly everyone
+  arrives from a phone, from Instagram, on cellular data.
+- The scope was fixed up front and stayed fixed.
+- The site had to be something Giancarlo could point at from a bio link without
+  explanation. No onboarding, no "scroll down to find the button."
+
+## Approach and key decisions
+
+### Design the path, then the pages
+
+I started from the single action that matters — book — and worked backwards. The
+booking route is reachable from the first screen without scrolling, and it stays
+reachable as you move down the page. Everything else on the site exists to answer
+the questions someone asks *before* they commit: what does the work look like, where
+is it, when is he open.
+
+Nothing on the site competes with that one action. There's no newsletter, no
+promotional interstitial, no second call-to-action fighting the first for attention.
+
+### Treat speed as part of the design, not a follow-up task
+
+On cellular, from a social app's in-app browser, a heavy page doesn't feel slow —
+it feels broken, and people leave before they've formed an opinion about the
+haircuts. Static rendering, images sized for the layout they land in, and no
+client-side JavaScript doing work the server already did.
+
+This is the argument I make to every service business: your site's speed *is* part
+of your first impression, in the same way the shop being clean is.
+
+### Instagram is the top of the funnel, not a competitor
+
+The site links out to Instagram rather than trying to replicate a feed inside
+itself. The photos live where he already posts them and where they're already
+maintained. Embedding a feed would have meant a third-party script, a slower page,
+and a second place for content to go stale.
+
+## Outcome
+
+Live and mobile-first, doing the one job it was scoped to do. Booking is moving from
+link-in-bio to the site itself through a Booksy integration that is in its final
+hookup — so as of writing, that path is in progress rather than finished, and this
+page will say so until it isn't.
+
+## What's next
+
+Finish the booking integration, then measure it. Booking clicks are the number that
+would make this case study concrete, and unlike traffic, it's a figure that maps
+directly onto whether the site earned its keep.

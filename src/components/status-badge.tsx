@@ -1,19 +1,21 @@
-import type { ProjectStatus } from "@/lib/projects";
+import type { Project } from "@/lib/content";
+
+type Status = Project["status"];
 
 /**
  * Status is stated, never implied. A badge that says `Design` is doing more for
  * credibility than a project page pretending to be finished would.
  */
-const LABELS: Record<ProjectStatus, string> = {
+const LABELS: Record<Status, string> = {
   shipped: "Shipped",
   prototype: "Prototype",
   building: "Building",
   design: "Design",
 };
 
-export function StatusBadge({ status }: { status: ProjectStatus }) {
-  // `signal` marks live things; everything in progress stays quiet. The accent
-  // is a state colour, so it has to mean something consistent everywhere.
+export function StatusBadge({ status }: { status: Status }) {
+  // `signal` marks live, finished things; everything in progress stays quiet.
+  // The accent is a state colour, so it has to mean the same thing everywhere.
   const isLive = status === "shipped";
 
   return (

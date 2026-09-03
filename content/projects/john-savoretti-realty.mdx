@@ -1,0 +1,104 @@
+---
+title: John Savoretti Realty
+slug: john-savoretti-realty
+lane: client
+status: shipped
+client: John Savoretti Realty
+role: Design & build
+stack: ["Next.js", "TypeScript (strict)", "Tailwind v4", "Vercel"]
+liveUrl: https://john-savoretti-realty.vercel.app/
+summary: Production site for a brokerage with two Long Island offices. Residential, rental and commercial listings share one typed pipeline built on discriminated unions, so invalid state combinations fail to compile rather than reaching the page.
+outcomeLine: Three kinds of listing on one typed pipeline, deploying from a git push.
+publishedAt: 2026-09-03
+caseStudy: true
+featured: true
+draft: false
+order: 1
+---
+
+## Context
+
+John Savoretti Realty runs two offices on Long Island — Franklin Square in Nassau
+County and Smithtown in Suffolk. Two markets, two sets of local knowledge, one
+brand.
+
+The interesting part isn't the office count. It's that a brokerage doesn't sell one
+kind of thing. A house for sale, an apartment for rent and a commercial storefront
+are all "listings," and on the surface they look like the same card in the same
+grid. Underneath they aren't. A rental has a monthly price and a lease term. A sale
+has an asking price and a status that moves through *active → under contract →
+sold*. A commercial space has square footage and a use classification, and "sold"
+may not be the word for what happens to it.
+
+Most small brokerage sites solve this by making one listing type with every field
+optional, then hiding the empty ones. That works until someone enters a rental with
+a sale status, and nothing stops them, and the card renders a lease with a **Sold**
+badge on it.
+
+## Constraints
+
+- One person maintains this. Every design decision had to survive being handled by
+  someone who is not looking at the code that day.
+- Content changes had to stay out of the components. Prices, office hours and
+  headline figures are the things that actually change; a site where changing an
+  office phone number means editing JSX is a site that goes stale.
+- Two offices had to feel like one business, not two microsites.
+
+## Approach and key decisions
+
+### Discriminated unions instead of optional fields
+
+The listings model is a discriminated union on `dealType`, with `status` narrowing
+per branch. A residential sale can be `active`, `under-contract` or `sold`. A rental
+can't be any of those — it has its own set. The union means those aren't the same
+type and the compiler knows it.
+
+The practical effect: a rental carrying a sale-only status isn't a bug that shows up
+on the page, it's a build that doesn't finish. The same goes for reading fields —
+`squareFootage` only exists on the commercial branch, so a component that tries to
+render it for a rental fails at compile time rather than printing `undefined`.
+
+That's the decision I'd defend hardest, because it converts a whole category of
+content mistakes from *runtime* problems into *build-time* ones. The person entering
+listings gets told immediately, by the tooling, instead of finding out from a client
+who saw something wrong.
+
+### One typed config, with formatters attached
+
+Office details, hours, headline figures and pricing live in a single typed
+configuration file with formatting helpers — `formatStat`, `formatPrice` — sitting
+next to the values they format.
+
+Keeping the formatter with the data matters more than it sounds. It means a price is
+displayed the same way in a card, in a listing header and in a page title, because
+all three call the same function. When something needs to change, it changes once,
+in the file whose whole job is holding facts. No component contains a business fact.
+
+### Routes that match how people actually search
+
+Rentals and commercial listings get dedicated routes rather than being filter states
+on one index. Somebody looking for commercial space on Long Island is doing a
+different search than somebody looking for a house, and a URL you can send to a
+person — or that a search engine can index as a distinct page — is worth more than a
+query parameter.
+
+## Outcome
+
+Three categories of listing run through one typed pipeline. The two offices are one
+site. Content changes touch one config file, not components. Deploys happen from a
+git push through GitHub to Vercel, so publishing a change is a commit rather than an
+event.
+
+No traffic or conversion numbers here yet — the analytics haven't been in place long
+enough for any figure to be honest, and a made-up one would be worse than none.
+
+## What's next
+
+The custom domain migration is in progress; the Vercel URL above is the live site
+until it cuts over. Beyond that, the thing I'd add next is measurement: right now I
+can describe what the site does structurally but not what it does commercially, and
+those are different claims.
+
+If I rebuilt it, I'd push the union further — status transitions are still validated
+by types rather than modelled as a state machine, which means the type system knows
+a rental can't be `sold` but doesn't know that `sold` can't go back to `active`.
