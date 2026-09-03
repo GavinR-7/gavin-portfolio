@@ -1,0 +1,160 @@
+---
+title: Designing a multi-area listings model with discriminated unions
+slug: typed-listings-discriminated-unions
+summary: A brokerage sells houses, rents apartments and leases storefronts. They look like one data type and they aren't. Here's what happened when I stopped pretending they were.
+publishedAt: 2026-09-03
+readingTime: 6
+draft: false
+---
+
+Every listing on a real estate site looks the same from ten feet away: an image, a
+price, an address, a badge in the corner. So the obvious model is one `Listing` type
+with fields for everything any listing might need, most of them optional.
+
+I wrote that version first. It's the version almost everyone writes first.
+
+```ts
+type Listing = {
+  id: string;
+  address: string;
+  price: number;
+  status: "active" | "under-contract" | "sold" | "rented" | "leased";
+  bedrooms?: number;
+  bathrooms?: number;
+  leaseTermMonths?: number;
+  squareFootage?: number;
+  useClass?: string;
+};
+```
+
+It compiles. It renders. And it is quietly wrong in a way that only shows up in
+front of a client.
+
+## The problem with optional fields
+
+Look at what that type actually says. It says a listing might have bedrooms and
+might have a lease term and might have a commercial use classification — possibly
+all three at once. It says a rental can have a status of `sold`.
+
+None of those things are true about the business. They're only true about the type.
+
+The gap between the two is where bugs live. Nothing stops someone entering an
+apartment for rent and setting its status to `under-contract`, because as far as the
+compiler is concerned that's a perfectly ordinary value for that field. The card
+renders. The badge says **Under contract**. Nobody notices until a tenant asks what
+that means.
+
+And it gets worse on the reading side. Every component that touches a listing has to
+defend itself:
+
+```tsx
+{listing.squareFootage && <Spec label="Size" value={listing.squareFootage} />}
+{listing.bedrooms && <Spec label="Beds" value={listing.bedrooms} />}
+```
+
+Those guards aren't protecting against anything real. They exist because the type
+lost information that the business has. A commercial space *always* has square
+footage. An apartment *never* has a use classification. The optional marker isn't
+describing uncertainty in the world — it's describing uncertainty I introduced by
+flattening three things into one.
+
+## Modelling what's actually true
+
+A discriminated union says the quiet part out loud: these are three different things
+that share some fields.
+
+```ts
+type Residential = {
+  dealType: "residential";
+  status: "active" | "under-contract" | "sold";
+  bedrooms: number;
+  bathrooms: number;
+  price: number;
+};
+
+type Rental = {
+  dealType: "rental";
+  status: "available" | "pending" | "rented";
+  bedrooms: number;
+  monthlyRent: number;
+  leaseTermMonths: number;
+};
+
+type Commercial = {
+  dealType: "commercial";
+  status: "available" | "under-contract" | "leased";
+  squareFootage: number;
+  useClass: string;
+};
+
+type Listing = (Residential | Rental | Commercial) & {
+  id: string;
+  address: string;
+};
+```
+
+`dealType` is the discriminant — the field TypeScript uses to work out which branch
+it's holding. Once you check it, everything else narrows:
+
+```tsx
+function ListingSpecs({ listing }: { listing: Listing }) {
+  switch (listing.dealType) {
+    case "residential":
+      return <Spec label="Beds" value={listing.bedrooms} />;
+    case "commercial":
+      // listing.bedrooms is a compile error here. Correctly.
+      return <Spec label="Size" value={listing.squareFootage} />;
+    case "rental":
+      return <Spec label="Lease" value={`${listing.leaseTermMonths} mo`} />;
+  }
+}
+```
+
+No optional chaining. No truthiness guards. Inside each branch, the fields that
+exist are the fields that exist, and they're required, so there is nothing to check.
+
+## The part that actually earns its keep
+
+Splitting `status` per branch is the change that does the most work, and it's the one
+people skip because it feels fussy.
+
+A rental cannot be `sold`. Not "shouldn't be" — *cannot*. It isn't a validation rule
+you enforce somewhere, it's a fact about the shape of the data. Once `status` lives
+inside each branch with only its own legal values, the illegal combination stops
+being representable. You cannot construct it. There is no code path that produces it,
+because there is no way to write it down.
+
+That's the difference between validating input and modelling a domain. Validation
+runs and can be forgotten. A type that can't express the bad state doesn't need to
+run at all.
+
+The practical version of this: the person entering listings finds out about a
+mistake from a red squiggle in their editor, before a commit, instead of from a
+client asking why the storefront says *Sold*.
+
+## What it costs
+
+Two honest downsides.
+
+**Shared operations get more verbose.** Anything that treats all listings uniformly —
+sorting, a search index, a sitemap — now has to handle three shapes. Usually that's a
+small mapping function, and usually writing it surfaces a question you were avoiding,
+like what "price" means when one of the three is monthly. But it is more code than
+`listing.price`.
+
+**Adding a fourth deal type touches every exhaustive switch.** That's the feature, not
+the bug — TypeScript is telling you the places that need a decision. It still feels
+like friction the day you do it.
+
+Neither of those costs is close to the cost of one wrong badge on a client's live
+site.
+
+## Where I'd go further
+
+The model still validates *states* but not *transitions*. The type system knows a
+rental can't be `sold`; it doesn't know that `sold` can't go back to `active`. That's
+a state machine, and it's the next thing I'd reach for — probably the moment a
+listing's history starts mattering as much as its current value.
+
+Worth noticing that the shape of that next step was only visible once the first
+modelling decision was made. The all-optional version couldn't even ask the question.
