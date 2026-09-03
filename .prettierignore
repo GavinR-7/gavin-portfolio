@@ -1,0 +1,10 @@
+# Build output and dependencies
+.next
+node_modules
+package-lock.json
+public
+
+# Prose is authored, not formatted — keep Prettier out of content and docs
+content
+*.md
+*.mdx
