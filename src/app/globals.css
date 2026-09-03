@@ -1,26 +1,124 @@
 @import "tailwindcss";
 
+/* ---------------------------------------------------------------------------
+   Dark mode is CLASS-BASED, not media-query-based.
+   Tailwind v4's built-in `dark:` variant follows prefers-color-scheme, which
+   can't be overridden by a user toggle. This redefines it to key off a `.dark`
+   class on <html>, which the inline script in layout.tsx sets before paint.
+   `:where()` keeps specificity at 0 so the variant never wins a cascade fight.
+--------------------------------------------------------------------------- */
+@custom-variant dark (&:where(.dark, .dark *));
+
+/* ---------------------------------------------------------------------------
+   TOKENS — the single source of truth for every color on this site.
+   Light and dark are designed in parallel, not derived by inversion.
+   Ratios verified against WCAG 2.1 AA (see ARCHITECTURE.md).
+--------------------------------------------------------------------------- */
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  color-scheme: light;
+
+  --bg: #f6f7f8; /* cool off-white page ground — deliberately not cream */
+  --surface: #ffffff; /* cards and spec blocks; depth via elevation, not shadow */
+  --ink: #121417; /* primary text — 17.2:1 on bg */
+  --muted: #565d65; /* secondary text + perceivable borders — 6.2:1 on bg */
+  --line: #dce0e4; /* decorative borders only (see ARCHITECTURE.md on 1.4.11) */
+  --signal: #9a5b00; /* the one accent: state, never decoration — 5.1:1 on bg */
 }
 
+.dark {
+  color-scheme: dark;
+
+  --bg: #101214; /* elevated graphite, never pure black */
+  --surface: #191c1f;
+  --ink: #e9ebed; /* 15.7:1 on bg */
+  --muted: #98a0a8; /* 7.1:1 on bg */
+  --line: #2a2f34;
+  --signal: #f0a93c; /* the bright LED version of the same accent — 9.3:1 */
+}
+
+/* ---------------------------------------------------------------------------
+   `@theme inline` exposes the tokens to Tailwind as utilities (bg-bg,
+   text-ink, border-line, ...). `inline` is what makes them themeable: the
+   generated CSS keeps the `var(--ink)` reference instead of resolving it to a
+   hex at build time, so flipping `.dark` re-resolves every utility at runtime.
+   Without `inline`, dark mode would need a second set of utilities.
+--------------------------------------------------------------------------- */
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --color-bg: var(--bg);
+  --color-surface: var(--surface);
+  --color-ink: var(--ink);
+  --color-muted: var(--muted);
+  --color-line: var(--line);
+  --color-signal: var(--signal);
+
+  --font-sans: var(--font-archivo), ui-sans-serif, system-ui, sans-serif;
+  --font-mono: var(--font-plex-mono), ui-monospace, "SF Mono", monospace;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+/* ---------------------------------------------------------------------------
+   Base
+--------------------------------------------------------------------------- */
+@layer base {
+  html {
+    -webkit-text-size-adjust: 100%;
+  }
+
+  body {
+    background-color: var(--bg);
+    color: var(--ink);
+    font-family: var(--font-sans);
+    font-synthesis-weight: none;
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* Focus is a first-class visual, drawn in the accent so it reads as state.
+     `signal` clears 3:1 against every surface in both themes. */
+  :focus-visible {
+    outline: 2px solid var(--signal);
+    outline-offset: 2px;
+    border-radius: 2px;
+  }
+
+  ::selection {
+    background-color: var(--signal);
+    color: var(--bg);
+  }
+
+  /* Reduced motion is honored globally rather than per-component, so no
+     animation can ever ship without respecting it by accident. */
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+      scroll-behavior: auto !important;
+    }
   }
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+/* ---------------------------------------------------------------------------
+   Custom utilities
+
+   `display-face` and `body-face` are the same typeface at different widths.
+   Archivo ships a `wdth` variable axis; `font-stretch` drives it. That width
+   contrast is where the site's typographic character comes from — which is why
+   there is no second display font to download.
+--------------------------------------------------------------------------- */
+@utility display-face {
+  font-stretch: 112%;
+  font-weight: 600;
+  letter-spacing: -0.021em;
+  line-height: 1.05;
+}
+
+/* The instrument-label voice: eyebrows, badges, spec rows, figure captions. */
+@utility label-face {
+  font-family: var(--font-mono);
+  font-size: 0.6875rem;
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
 }
