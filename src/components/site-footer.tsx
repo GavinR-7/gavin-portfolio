@@ -1,3 +1,4 @@
+import { ExternalLink } from "@/components/external-link";
 import { siteConfig } from "@/site.config";
 
 /**
@@ -19,8 +20,12 @@ export function SiteFooter() {
 
           <nav aria-label="Footer" className="flex flex-col gap-2.5 sm:items-end">
             <FooterLink href={`mailto:${contact.email}`}>{contact.email}</FooterLink>
-            <FooterLink href={links.github}>GitHub</FooterLink>
-            <FooterLink href={links.linkedin}>LinkedIn</FooterLink>
+            <ExternalLink href={links.github} className={FOOTER_LINK}>
+              GitHub
+            </ExternalLink>
+            <ExternalLink href={links.linkedin} className={FOOTER_LINK}>
+              LinkedIn
+            </ExternalLink>
             {resume.available ? <FooterLink href={resume.path}>Résumé</FooterLink> : null}
           </nav>
         </div>
@@ -30,12 +35,12 @@ export function SiteFooter() {
           {links.repo ? (
             <>
               {" — "}
-              <a
+              <ExternalLink
                 href={links.repo}
                 className="hover:text-signal underline underline-offset-4"
               >
                 view source
-              </a>
+              </ExternalLink>
             </>
           ) : null}
         </p>
@@ -44,9 +49,11 @@ export function SiteFooter() {
   );
 }
 
+const FOOTER_LINK = "text-muted hover:text-signal text-sm transition-colors";
+
 function FooterLink({ href, children }: { href: string; children: React.ReactNode }) {
   return (
-    <a href={href} className="text-muted hover:text-signal text-sm transition-colors">
+    <a href={href} className={FOOTER_LINK}>
       {children}
     </a>
   );

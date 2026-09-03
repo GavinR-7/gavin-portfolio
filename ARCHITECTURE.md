@@ -177,3 +177,46 @@ Beyond `strict`:
 | Conditional links off config | Ship links, fix later | Makes a dead link structurally impossible |
 | `/services` cut | Keep it | Primary audience is recruiters and faculty; a sales page reads as freelancer positioning to them. It's the seed of a separate site |
 | `/work` → `/projects` | Keep `/work` | "Work" reads freelance; "Projects" is the right word for a personal engineering site |
+
+---
+
+## The signature element
+
+`src/components/step-response.tsx` — the hero trace.
+
+It draws the step response of an underdamped second-order system: the canonical way
+to characterise a system in ECE, and the exact shape of the positioning — sharp
+input arrives, the system overshoots and rings, then holds steady.
+
+```
+y(t) = 1 - (e^(-ζωₙt) / √(1-ζ²)) · sin(ω_d·t + arccos ζ),   ω_d = ωₙ√(1-ζ²)
+```
+
+ζ = 0.28, ωₙ = 14. Those constants were chosen by simulating the curve in Node and
+checking the 40% overshoot stayed inside the canvas before any of it was drawn.
+
+Three properties it was built to have:
+
+**It terminates.** One 1.5s sweep on load, then the rAF loop exits. An animation
+that loops forever on a portfolio is a battery cost with no information in it.
+
+**It knows nothing about theming.** Colours come from `getComputedStyle` —
+`color` for the trace, `borderTopColor` for the grid — both set by Tailwind
+classes on the canvas. A `MutationObserver` on `<html>`'s class list triggers a
+repaint when the theme flips. No colour literals in the component.
+
+**Its fallbacks are structural.** The axis line is a CSS gradient
+(the `trace-axis` utility), so it renders with JavaScript disabled; the canvas only
+paints the trace over it. `prefers-reduced-motion` draws the settled curve
+immediately. The canvas is `aria-hidden` and the hero is complete without it.
+
+## Client JS budget
+
+| | gzipped |
+|---|---|
+| Homepage first load (modern browser) | ~136K |
+| — of which our own client components | 7.1K |
+| Polyfills chunk (`noModule`, not downloaded by modern browsers) | 39K |
+
+Three client components exist site-wide: the theme toggle, the step response, and
+the copy-email button. Everything else is a server component and ships no JS.
