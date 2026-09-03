@@ -143,3 +143,110 @@ measuring is the one you just built.
 **Deferred to later phases by design:** `/projects`, `/about` and `/writing` are
 linked from the homepage but don't exist yet (Phases 3 and 4). The Phase 6 QA pass
 is where "every link resolves" gets enforced.
+
+---
+
+## Phase 3 — Work system & case studies
+
+**Built:** the MDX + zod pipeline, `/projects`, `/projects/[slug]`, and two full case
+studies.
+
+**The pipeline.** `gray-matter` splits frontmatter from body; a zod schema validates
+the frontmatter; the loader throws with the file name, the field name and the legal
+values if anything is wrong. All of it runs in a server component at build time.
+
+I broke a field deliberately to check the claim rather than assert it — set The
+Ledger's `status` to `mostly-done` and ran a build:
+
+```
+Error: Invalid frontmatter in content/projects/the-ledger.mdx:
+  status: Invalid option: expected one of "shipped"|"prototype"|"building"|"design"
+```
+
+Exit code 1. Bad content can't reach production, and the error tells you exactly
+where to look. That's the entire argument for validating content the same way you'd
+validate an API response.
+
+**The second axis, in practice.** Phase 0's `status` / `draft` split turned into a
+third field once the content was real: `caseStudy`. Status says whether there's
+something to show, draft says whether I'm allowed to show it, and `caseStudy` says
+whether there's a *story that ends somewhere*. Above All Tents and The Ledger both
+have live links and neither has an outcome to write an ending on, so they're cards
+that link straight to the live site and generate no route.
+
+That distinction earns its keep in `ProjectCard`: when `caseStudy` is false the title
+links to `liveUrl` instead of `/projects/<slug>`. A card structurally cannot point at
+a page that doesn't exist — verified by crawling every internal link on every page.
+
+**Drafts render in dev, not in production.** `process.env.NODE_ENV !== "production"`
+in the visibility filter, so unfinished writing is previewable without publishing it.
+
+**Where the content stops.** Both shipped case studies are written from facts. Above
+All Tents didn't get one because I don't know the build story and won't reconstruct
+one — that's in `CONTENT_TODO.md` as a specific list of questions rather than a
+paragraph of plausible-sounding filler.
+
+---
+
+## Phase 4 — Supporting pages
+
+`/writing` with one real post on discriminated unions — drawn from the Savoretti
+build, so the writing and the case study reinforce each other rather than sitting in
+separate silos.
+
+`/about` groups skills by what they let me deliver rather than by proficiency. No
+bars. The résumé link is still gated on `resume.available`.
+
+The 404 is the signature element's one echo: the same axis with no trace on it. It's
+the hero's CSS fallback line, used deliberately rather than as a degradation — zero
+JavaScript on the page.
+
+---
+
+## Phase 5 — Polish, SEO, performance
+
+**OG images.** `ImageResponse` renders JSX to PNG through Satori, which understands a
+subset of flexbox and nothing else — no stylesheet, so the theme tokens are restated
+as literals in `src/lib/og.tsx`, and fonts have to arrive as raw bytes. I committed
+three WOFF files to `src/assets/fonts/` rather than fetching from Google at build
+time; a build that needs the network to succeed is a build that fails on a plane.
+
+The nice part: the trace on every card is drawn by `stepResponseSvg()`, the same
+function the hero canvas uses. Extracting that math into `src/lib/step-response.ts`
+means the social preview carries the same curve rather than a lookalike.
+
+Satori has no `line-clamp`, so summaries are trimmed on a word boundary before they
+reach the layout.
+
+**Structured data.** `Person` on the homepage — the site is found by searching a
+name, and this is what turns that string into an entity with an affiliation and known
+profiles. `CreativeWork` on case studies with `sameAs` pointing at the live site.
+`BlogPosting` on posts. The rule everything obeys: JSON-LD must describe what a human
+can actually see on the page. Claiming more is spam and gets treated as such.
+
+**A font weight that was costing real bytes.** `next/font` preloads every declared
+weight on every route. IBM Plex Mono 400 was only used by inline code in a single
+post, so it was putting ~19KB on the critical path of pages that never render it.
+Dropped it; inline code sets at 500 and arguably reads better.
+
+The remaining honest cost is Archivo at 88KB — larger than one static weight because
+it carries the full `wght` and `wdth` ranges. It's still smaller than the three or
+four static faces it replaces and it's cached across every route, but it is the
+single heaviest asset on the site and it's the price of the width-axis idea.
+
+**Measured, gzipped:** HTML 6.3–9.2KB per route; first-load JS ~138KB for a modern
+browser, of which 7.1KB is ours; fonts 98KB across two files.
+
+**Verification sweep:** all 15 routes return the expected status (including the two
+card-only projects correctly 404ing), every internal link on every page resolves,
+exactly one `h1` per page with no skipped heading levels, landmarks and skip link on
+every route, no image without alt text, JSON-LD parses to the expected `@type` on all
+three page kinds.
+
+**What I could not do here: run Lighthouse.** Chrome's shared libraries aren't
+installed in this WSL environment and installing them needs sudo. Downloading Chrome
+for Testing got as far as `libnspr4.so: cannot open shared object file`. So the
+performance budget is verified by proxy — static rendering everywhere, no
+render-blocking JavaScript, fonts preloaded and self-hosted, no third-party requests
+— but not by an actual Lighthouse run. That's the one Section 8 requirement still
+outstanding, and it needs a real browser.
