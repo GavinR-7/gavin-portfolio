@@ -50,8 +50,8 @@ export const siteConfig = {
   links: {
     github: "https://github.com/GavinR-7",
     linkedin: "https://www.linkedin.com/in/gavinreis",
-    /** The repo behind this site. Set in Phase 6; until then the footer omits it. */
-    repo: null as string | null,
+    /** The repo behind this site — the code is itself a portfolio piece. */
+    repo: "https://github.com/GavinR-7/gavin-portfolio" as string | null,
   },
 
   /** Renders nowhere until the PDF actually exists in /public. */
