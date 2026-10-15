@@ -37,7 +37,8 @@ export const projectSchema = z.object({
   status: z.enum(["shipped", "prototype", "building", "design"]),
   role: z.string().min(1),
   stack: z.array(z.string()).min(1),
-  liveUrl: z.url(),
+  /** Where it runs. Absent for work with nothing public to open (coursework, private tools). */
+  liveUrl: z.url().optional(),
   repoUrl: z.url().optional(),
   client: z.string().optional(),
   timeline: z.string().optional(),

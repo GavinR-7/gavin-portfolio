@@ -26,7 +26,7 @@ export function personSchema() {
   };
 }
 
-/** A case study is a CreativeWork about a thing that exists at `liveUrl`. */
+/** A case study is a CreativeWork about a thing that exists at `liveUrl` (when it is public). */
 export function caseStudySchema(project: Project) {
   return {
     "@context": "https://schema.org",
