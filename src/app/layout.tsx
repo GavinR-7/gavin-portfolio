@@ -79,7 +79,7 @@ try {
   document.documentElement.classList.toggle("dark", dark);
 } catch (e) {}
 console.log(
-  "%cThe hero trace is a second-order step response — \u03b6=0.28, \u03c9\u2099=14.%c\n" +
+  "%cThe hero trace is a second-order step response — \u03b6=0.28, \u03c9\u2099=14.%c\\n" +
     ${JSON.stringify(siteConfig.links.repo ?? "")},
   "color:#f0a93c;font-weight:600",
   "color:inherit",
