@@ -15,7 +15,7 @@ export type NavItem = {
 
 export const siteConfig = {
   /** Canonical origin. Used for metadataBase, sitemap, canonical URLs, OG. */
-  url: "https://gavinreis.com",
+  url: "https://www.gavinreis.com",
 
   identity: {
     name: "Gavin Reis",

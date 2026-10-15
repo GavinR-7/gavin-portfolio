@@ -17,13 +17,13 @@ and anything in progress or not launched says so.
   hash-bound approvals; 120+ automated tests. Code is private.
 - 32-bit RISC-V processor (ECE 2300): a single-cycle TinyRV1 core in Verilog,
   arithmetic built from gates, running RISC-V assembly on an FPGA. Course code is private.
-- [John Savoretti Realty](https://gavinreis.com/projects/john-savoretti-realty) (building):
+- [John Savoretti Realty](https://www.gavinreis.com/projects/john-savoretti-realty) (building):
   site for a two-office Long Island brokerage. Residential, rental and commercial
   listings share one typed pipeline built on TypeScript discriminated unions.
   Preview: https://john-savoretti-realty.vercel.app/
 - Above All Tents: first site designed, built, shipped and sold end to end.
   Live: https://abovealltents.com/
-- [GC Kuts](https://gavinreis.com/projects/gc-kuts) (prototype, not launched):
+- [GC Kuts](https://www.gavinreis.com/projects/gc-kuts) (prototype, not launched):
   mobile-first site built for a friend, an independent barber whose business runs
   through Instagram. Preview: https://gckuts-site.vercel.app/
 - The Ledger: Prototype exploring how to present reporting without editorial
@@ -40,8 +40,8 @@ and anything in progress or not launched says so.
 
 ## Writing
 
-- [Designing a multi-area listings model with discriminated unions](https://gavinreis.com/writing/typed-listings-discriminated-unions)
+- [Designing a multi-area listings model with discriminated unions](https://www.gavinreis.com/writing/typed-listings-discriminated-unions)
 
 ## Contact
 
-gjr74@cornell.edu · https://github.com/GavinR-7 · https://www.linkedin.com/in/gavinreis · Résumé: https://gavinreis.com/resume.pdf
+gjr74@cornell.edu · https://github.com/GavinR-7 · https://www.linkedin.com/in/gavinreis · Résumé: https://www.gavinreis.com/resume.pdf
