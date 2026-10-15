@@ -19,7 +19,7 @@ export function SiteHeader() {
 
         <nav
           aria-label="Primary"
-          className="flex w-full items-center justify-between gap-5 sm:ml-auto sm:w-auto sm:justify-end sm:gap-6"
+          className="flex w-full items-center justify-between gap-2 sm:ml-auto sm:w-auto sm:justify-end sm:gap-6"
         >
           {siteConfig.nav.map((item) => (
             <Link
