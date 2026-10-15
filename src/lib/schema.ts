@@ -50,7 +50,8 @@ export function articleSchema(post: Post) {
     description: post.summary,
     url: `${siteConfig.url}/writing/${post.slug}`,
     datePublished: post.publishedAt.toISOString(),
-    dateModified: post.publishedAt.toISOString(),
+    // Matches the sitemap's lastModified, so crawlers see one revision date.
+    dateModified: (post.updatedAt ?? post.publishedAt).toISOString(),
     author: { "@type": "Person", name: siteConfig.identity.name, url: siteConfig.url },
     publisher: { "@type": "Person", name: siteConfig.identity.name },
     mainEntityOfPage: `${siteConfig.url}/writing/${post.slug}`,

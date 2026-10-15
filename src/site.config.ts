@@ -57,7 +57,7 @@ export const siteConfig = {
   /** Renders nowhere until the PDF actually exists in /public. */
   resume: {
     path: "/resume.pdf",
-    available: false,
+    available: true,
   },
 
   nav: [

@@ -26,6 +26,8 @@ const baseFields = {
     .regex(/^[a-z0-9-]+$/, "slug must be lowercase letters, digits and hyphens"),
   summary: z.string().min(1),
   publishedAt: z.coerce.date(),
+  /** When the content last changed materially (a status or outcome rewrite). Feeds the sitemap. */
+  updatedAt: z.coerce.date().optional(),
   /** Permission / readiness gate. Drafts never render in a production build. */
   draft: z.boolean(),
 };

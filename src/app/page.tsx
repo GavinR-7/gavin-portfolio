@@ -93,10 +93,11 @@ export default function HomePage() {
       <Figure number="03" title="About">
         <p className="text-ink max-w-2xl text-lg leading-relaxed text-balance">
           I&rsquo;m a junior in Electrical &amp; Computer Engineering at Cornell, and I
-          run a small web practice on Long Island. Most of what I know came from shipping
-          things people actually depend on — a brokerage&rsquo;s listings, a
-          barber&rsquo;s booking path, a rental business&rsquo;s entire online presence —
-          and from building the systems I wanted to exist for my own coursework.
+          run Embedded Intent, a small web and AI automation practice on Long Island. Most
+          of what I know came from building things for real businesses — a rental
+          company&rsquo;s entire online presence, a brokerage&rsquo;s listings — and from
+          building the systems I wanted to exist for my own coursework and my own
+          business.
         </p>
         <Link
           href="/about"
