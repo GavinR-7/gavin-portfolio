@@ -49,16 +49,23 @@ export function ProjectCard({ project }: { project: Project }) {
       </dl>
 
       {/* Sits above the card-wide overlay link so it stays independently clickable. */}
-      {outside ? (
-        <ExternalLink
-          href={outside}
-          className="label-face text-muted hover:text-signal relative z-10 mt-4 inline-block underline-offset-4 hover:underline"
-        >
-          {project.liveUrl
-            ? displayHost(outside)
-            : `${displayHost(outside)}${new URL(outside).pathname}`}{" "}
-          ↗
-        </ExternalLink>
+      {project.liveUrl || project.repoUrl ? (
+        <div className="relative z-10 mt-4 flex flex-wrap gap-x-5 gap-y-2">
+          {[project.liveUrl, project.repoUrl]
+            .filter((url): url is string => Boolean(url))
+            .map((url) => (
+              <ExternalLink
+                key={url}
+                href={url}
+                className="label-face text-muted hover:text-signal underline-offset-4 hover:underline"
+              >
+                {url === project.liveUrl
+                  ? displayHost(url)
+                  : `${displayHost(url)}${new URL(url).pathname}`}{" "}
+                ↗
+              </ExternalLink>
+            ))}
+        </div>
       ) : null}
     </article>
   );
