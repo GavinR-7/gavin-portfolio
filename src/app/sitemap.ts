@@ -17,13 +17,13 @@ export default function sitemap(): MetadataRoute.Sitemap {
 
   const caseStudies = getCaseStudies().map((entry) => ({
     url: `${siteConfig.url}/projects/${entry.meta.slug}`,
-    lastModified: entry.meta.publishedAt,
+    lastModified: entry.meta.updatedAt ?? entry.meta.publishedAt,
     priority: 0.7,
   }));
 
   const posts = getPosts().map((entry) => ({
     url: `${siteConfig.url}/writing/${entry.meta.slug}`,
-    lastModified: entry.meta.publishedAt,
+    lastModified: entry.meta.updatedAt ?? entry.meta.publishedAt,
     priority: 0.6,
   }));
 
