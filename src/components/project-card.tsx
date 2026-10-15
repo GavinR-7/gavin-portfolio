@@ -18,20 +18,24 @@ function displayHost(url: string): string {
  * exist. `caseStudy: false` is a content decision, not a missing file.
  */
 export function ProjectCard({ project }: { project: Project }) {
-  const href = project.caseStudy ? `/projects/${project.slug}` : project.liveUrl;
+  // Case study, else the live site, else the code; a project with none of them is a plain card.
+  const outside = project.liveUrl ?? project.repoUrl;
+  const href = project.caseStudy ? `/projects/${project.slug}` : outside;
 
   return (
     <article className="border-line bg-surface hover:border-muted group relative rounded-sm border p-6 transition-colors">
       <div className="flex items-start justify-between gap-4">
         <h3 className="display-face text-ink text-xl">
-          {project.caseStudy ? (
+          {project.caseStudy && href ? (
             <Link href={href} className="before:absolute before:inset-0">
               {project.title}
             </Link>
-          ) : (
+          ) : href ? (
             <ExternalLink href={href} className="before:absolute before:inset-0">
               {project.title}
             </ExternalLink>
+          ) : (
+            project.title
           )}
         </h3>
         <StatusBadge status={project.status} />
@@ -45,12 +49,17 @@ export function ProjectCard({ project }: { project: Project }) {
       </dl>
 
       {/* Sits above the card-wide overlay link so it stays independently clickable. */}
-      <ExternalLink
-        href={project.liveUrl}
-        className="label-face text-muted hover:text-signal relative z-10 mt-4 inline-block underline-offset-4 hover:underline"
-      >
-        {displayHost(project.liveUrl)} ↗
-      </ExternalLink>
+      {outside ? (
+        <ExternalLink
+          href={outside}
+          className="label-face text-muted hover:text-signal relative z-10 mt-4 inline-block underline-offset-4 hover:underline"
+        >
+          {project.liveUrl
+            ? displayHost(outside)
+            : `${displayHost(outside)}${new URL(outside).pathname}`}{" "}
+          ↗
+        </ExternalLink>
+      ) : null}
     </article>
   );
 }

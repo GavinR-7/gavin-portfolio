@@ -77,17 +77,19 @@ export default async function CaseStudyPage({ params }: Params) {
             <StatusBadge status={meta.status} />
           </dd>
         </div>
-        <div className="flex gap-3">
-          <dt className="label-face text-muted shrink-0">Live</dt>
-          <dd className="text-sm">
-            <ExternalLink
-              href={meta.liveUrl}
-              className="text-signal underline underline-offset-4"
-            >
-              {new URL(meta.liveUrl).host.replace(/^www\./, "")} ↗
-            </ExternalLink>
-          </dd>
-        </div>
+        {meta.liveUrl ? (
+          <div className="flex gap-3">
+            <dt className="label-face text-muted shrink-0">Live</dt>
+            <dd className="text-sm">
+              <ExternalLink
+                href={meta.liveUrl}
+                className="text-signal underline underline-offset-4"
+              >
+                {new URL(meta.liveUrl).host.replace(/^www\./, "")} ↗
+              </ExternalLink>
+            </dd>
+          </div>
+        ) : null}
       </dl>
 
       <div className="mt-12">
