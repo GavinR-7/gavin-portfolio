@@ -1,11 +1,11 @@
-# gavinr.dev
+# gavinreis.com
 
 Personal engineering portfolio for Gavin Reis — Cornell ECE.
 
 Static Next.js site. Content is MDX files in this repo, validated by zod at build
 time. No database, no CMS, no auth.
 
-**Live:** https://gavinr.dev
+**Live:** https://gavinreis.com
 
 ---
 
