@@ -65,12 +65,13 @@ export default function AboutPage() {
             site came from.
           </p>
           <p className="text-muted">
-            I run a small web practice building sites for local businesses — a real estate
-            brokerage, a barber, a tent rental company. Three of them are live and one of
-            them I sold. That work taught me things a course can&rsquo;t: that a data
-            model is a promise you make to whoever maintains it, that speed is part of a
-            first impression, and that the hardest part of a project is usually deciding
-            what not to build.
+            I run Embedded Intent, a small web and AI automation practice for local
+            service businesses. A tent rental company&rsquo;s site is live and sold; a
+            real estate brokerage&rsquo;s is close to launch; and a barbershop site I
+            built for a friend never launched because he chose not to pursue it. That work
+            taught me things a course can&rsquo;t: that a data model is a promise you make
+            to whoever maintains it, that speed is part of a first impression, and that
+            the hardest part of a project is usually deciding what not to build.
           </p>
           <p className="text-muted">
             The other half is systems I build for myself — retrieval pipelines over course
