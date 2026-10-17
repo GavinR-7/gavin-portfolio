@@ -38,7 +38,7 @@ out to be already closed: all three clients agreed to portfolio use before their
 started. Asking up front, before doing the work, is the whole lesson there.
 
 **Also decided:** contact email is `gjr74@cornell.edu` (institutional address is the
-stronger signal for this audience); the $3,000 Above All Tents sale stays off the site
+stronger signal for this audience); the $1,100 Above All Tents engagement stays off the site
 (the fact a client paid is the signal, the number reads as freelancer framing); The
 Ledger ships as a linked `Prototype`, not a case study, because the case study arc
 needs an outcome and it runs on sample articles.
