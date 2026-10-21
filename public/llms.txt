@@ -4,20 +4,28 @@
 > put them in front of real users.
 
 Personal engineering portfolio. Static site, no tracking beyond privacy-friendly
-page analytics. Everything here is real: every project links to something running,
-and work that isn't deployed is listed as in-progress rather than written up.
+page analytics. Every status is stated: shipped work links to something running,
+and anything in progress or not launched says so.
 
 ## Projects
 
-- [John Savoretti Realty](https://gavinr.dev/projects/john-savoretti-realty):
-  Production site for a two-office Long Island brokerage. Residential, rental and
-  commercial listings share one typed pipeline built on TypeScript discriminated
-  unions. Live: https://john-savoretti-realty.vercel.app/
-- [GC Kuts](https://gavinr.dev/projects/gc-kuts): Mobile-first site for an
-  independent barber whose funnel runs through Instagram.
-  Live: https://gckuts-site.vercel.app/
-- Above All Tents: First site designed, built, shipped and sold end to end.
+- Embedded Intent: my web and AI automation agency for local service businesses;
+  eleven priced services and a one-command quality gate on every change.
+  Live: https://www.embeddedintent.com/ · Code: https://github.com/GavinR-7/embedded-intent
+- HQ (building): a multi-agent operations system that runs my agency work and
+  school planning; SQLite work orders with leased, attempt-bound claims and
+  hash-bound approvals; 120+ automated tests. Code is private.
+- 32-bit RISC-V processor (ECE 2300): a single-cycle TinyRV1 core in Verilog,
+  arithmetic built from gates, running RISC-V assembly on an FPGA. Course code is private.
+- [John Savoretti Realty](https://gavinr.dev/projects/john-savoretti-realty) (building):
+  site for a two-office Long Island brokerage. Residential, rental and commercial
+  listings share one typed pipeline built on TypeScript discriminated unions.
+  Preview: https://john-savoretti-realty.vercel.app/
+- Above All Tents: first site designed, built, shipped and sold end to end.
   Live: https://abovealltents.com/
+- [GC Kuts](https://gavinr.dev/projects/gc-kuts) (prototype, not launched):
+  mobile-first site built for a friend, an independent barber whose business runs
+  through Instagram. Preview: https://gckuts-site.vercel.app/
 - The Ledger: Prototype exploring how to present reporting without editorial
   slant. Runs on sample articles, not live news.
   Live: https://the-ledger-ashen.vercel.app/
@@ -36,4 +44,4 @@ and work that isn't deployed is listed as in-progress rather than written up.
 
 ## Contact
 
-gjr74@cornell.edu · https://github.com/GavinR-7 · https://www.linkedin.com/in/gavinreis
+gjr74@cornell.edu · https://github.com/GavinR-7 · https://www.linkedin.com/in/gavinreis · Résumé: https://gavinr.dev/resume.pdf

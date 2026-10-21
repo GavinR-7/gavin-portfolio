@@ -79,7 +79,10 @@ export default async function CaseStudyPage({ params }: Params) {
         </div>
         {meta.liveUrl ? (
           <div className="flex gap-3">
-            <dt className="label-face text-muted shrink-0">Live</dt>
+            {/* Only shipped work is "Live"; anything else is a preview of something not launched. */}
+            <dt className="label-face text-muted shrink-0">
+              {meta.status === "shipped" ? "Live" : "Preview"}
+            </dt>
             <dd className="text-sm">
               <ExternalLink
                 href={meta.liveUrl}
