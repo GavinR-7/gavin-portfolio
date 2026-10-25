@@ -1,7 +1,7 @@
 ---
 title: Designing a multi-area listings model with discriminated unions
 slug: typed-listings-discriminated-unions
-summary: A brokerage sells houses, rents apartments and leases storefronts. They look like one data type and they aren't. Here's what happened when I stopped pretending they were.
+summary: A brokerage sells houses, rents apartments and leases storefronts. They look like one data type and they aren't. Here's the model I'd move a flat listings type to, and what it costs.
 publishedAt: 2026-09-03
 readingTime: 6
 draft: false
@@ -11,7 +11,9 @@ Every listing on a real estate site looks the same from ten feet away: an image,
 price, an address, a badge in the corner. So the obvious model is one `Listing` type
 with fields for everything any listing might need, most of them optional.
 
-I wrote that version first. It's the version almost everyone writes first.
+That's close to the version I shipped on the Savoretti site: one flat `Listing`
+type with a `dealType` field and optional extras. This post is about the model I'd
+move it to and why. The code below is a sketch of that model, not the shipped code.
 
 ```ts
 type Listing = {
@@ -128,9 +130,9 @@ That's the difference between validating input and modelling a domain. Validatio
 runs and can be forgotten. A type that can't express the bad state doesn't need to
 run at all.
 
-The practical version of this: the person entering listings finds out about a
-mistake from a red squiggle in their editor, before a commit, instead of from a
-client asking why the storefront says *Sold*.
+The practical version of this: whoever writes the code that maps listing data finds
+out about a mistake from a red squiggle in their editor, before a commit, instead of
+from a client asking why the storefront says *Sold*.
 
 ## What it costs
 
