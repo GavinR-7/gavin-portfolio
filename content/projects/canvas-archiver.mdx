@@ -1,0 +1,121 @@
+---
+title: Canvas Archiver
+slug: canvas-archiver
+lane: lab
+status: building
+role: "Solo: design, build, tests"
+stack: ["TypeScript", "React", "WXT", "Chrome Manifest V3", "Vitest"]
+repoUrl: https://github.com/GavinR-7/canvas-archiver
+timeline: Sep to Oct 2026
+summary: A Chrome extension that shows a Cornell student their due dates and course files from Canvas, Gradescope and Ed in one place. It reads through the browser session you already have, with no tokens, no password and no server, and keeps everything on your own computer.
+outcomeLine: "Built and tested, not yet published: 236 automated tests passing, nine pull requests open, Cornell students only."
+publishedAt: 2026-10-25
+caseStudy: true
+featured: false
+draft: false
+order: 8
+---
+
+## Context
+
+My deadlines live in three places. Canvas has most of them, Gradescope has the ones
+a course posts only there, and Ed has announcements that move dates. Canvas also
+makes it slow to get your own course files out. I wanted one page that answers
+"what is due in the next two weeks" and one button that saves a course's materials
+to a folder I choose.
+
+I did not want a tool that holds my login or sends my coursework to a server. So the
+rule from the start was that the data never leaves the browser unless I turn
+something on.
+
+## What it is
+
+A Chrome extension. It reads Canvas, Gradescope and Ed with the sign-in your browser
+already has, so it never asks for a password or a Canvas access token. There is no
+backend and no analytics.
+
+- **Upcoming.** Everything due in the next 14 days across all courses, merged from
+  the three sites and de-duplicated.
+- **Files.** Saves a course's modules, files, pages, assignments, announcements and
+  syllabus into a folder you pick. It only fetches what changed since the last run.
+- **Week schedule.** A weekly page built from your class times and the deadlines.
+- **Course chat.** Ask a question about a course and get an answer with the passages
+  it came from. It is off for every course until you tick that course's box, and it
+  uses your own API key.
+- **Opt-in extras.** A due date file synced to a GitHub repo you name, and a nightly
+  file run. Both are off by default.
+
+It is read-only toward every site it touches. It never submits, edits or deletes
+anything on Canvas, Gradescope or Ed.
+
+## How it's built
+
+- **WXT and Manifest V3.** TypeScript throughout, React for the pages. The
+  background worker does the fetching, and six pages sit on top of it: popup,
+  Upcoming, Files, Chat, Schedule and Settings.
+- **Small permissions.** Three browser permissions and four site addresses, listed
+  below. No access to your tabs, cookies or every website.
+- **Consent before reading.** A first run screen explains what is read and what is
+  not. Until you accept it, no page and no background job fetches anything. Settings
+  has a withdraw button that stops all reading.
+- **A frozen Python version came first.** I wrote a command line tool before the
+  extension. It stopped at a working login and course list, and I kept it because
+  its tests record how Canvas really behaves, such as signalling throttling with a
+  403 instead of a 429 and paging results through a `Link` header.
+- **One slice per pull request.** Each feature is its own pull request, stacked on the
+  one before, with unit tests on the pure logic and a note on what was not checked
+  against a live account.
+
+## Measured numbers
+
+From the canvas-archiver repository at the head of pull request #9 (commit
+`a1154c8`), read on 2026-10-25. Test and type results are from running the
+repo's own commands.
+
+<div className="border-line my-6 overflow-x-auto rounded-sm border">
+<table className="w-full min-w-[34rem] border-collapse text-left text-sm [&_th]:px-3 [&_th]:py-2 [&_th]:font-semibold [&_td]:px-3 [&_td]:py-2 [&_td]:align-top [&_tr]:border-line [&_tr]:border-b [&_tr:last-child]:border-b-0 [&_thead]:bg-surface [&_td]:text-ink/90 [&_code]:bg-surface [&_code]:border-line [&_code]:rounded-sm [&_code]:border [&_code]:px-1 [&_code]:font-mono [&_code]:text-[0.85em]">
+  <thead>
+    <tr><th>What</th><th>Number</th><th>How it's counted</th></tr>
+  </thead>
+  <tbody>
+    <tr><td>Automated tests, extension</td><td>236</td><td>All passing, in 16 test files, from <code>npm test</code> in <code>extension/</code></td></tr>
+    <tr><td>Type check</td><td>Clean</td><td><code>tsc --noEmit</code> reports no errors</td></tr>
+    <tr><td>Automated tests, Python version</td><td>117</td><td>The repo README's figure for the frozen command line tool. I did not re-run these for this page</td></tr>
+    <tr><td>Pull requests</td><td>9</td><td>All open, stacked one on the next, none merged. Only the first milestone is on <code>main</code></td></tr>
+    <tr><td>Commits on the stack</td><td>32</td><td>From the first commit on 2026-09-17 to the last on 2026-10-24</td></tr>
+    <tr><td>Browser permissions</td><td>3</td><td><code>storage</code>, <code>downloads</code>, <code>alarms</code></td></tr>
+    <tr><td>Site addresses it can read</td><td>4</td><td><code>canvas.cornell.edu</code>, <code>www.gradescope.com</code>, <code>edstem.org</code>, <code>us.edstem.org</code></td></tr>
+    <tr><td>Extra addresses, asked only when you opt in</td><td>2</td><td><code>api.github.com</code> and <code>api.anthropic.com</code></td></tr>
+    <tr><td>Store icon sizes and screenshots</td><td>5 and 4</td><td>Icons from 16 to 128 pixels. Four screenshots at 1280 by 800 taken from the built extension with made up data</td></tr>
+  </tbody>
+</table>
+</div>
+
+## Where it stands
+
+Built and tested. Not published. I have not put it on the Chrome Web Store, and it
+has no users, so there are no adoption numbers on this page and I'm not implying
+any.
+
+It is also Cornell only. The only Canvas address in the manifest is Cornell's, and
+adding another school is a one line change plus a new store listing. I chose not to
+widen it, because asking for every Canvas host or every site would make a browser
+review harder and ask for more access than the tool needs.
+
+Two things are still unverified. I have not run the packaged build against a real
+account from start to finish, and the Gradescope reader is a plain text parser that
+has not been checked against a live page.
+
+## What I'm not claiming
+
+No users, no downloads, no reviews and no time saved. The numbers above are the size
+and test state of the code, not results from people using it. I also have not decided
+whether to publish. Course materials belong to the student and the school, and
+Cornell's rules on third party tools and AI services are worth reading before a
+public listing, so that call is still open.
+
+## What's next
+
+Decide whether it goes on the store at all. If it does, the open steps are a hosted
+privacy policy page, a contact address on it, the developer account, and one run of
+the exact packaged build on a real Cornell account first.
