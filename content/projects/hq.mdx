@@ -62,15 +62,22 @@ inbox with its recommendation, and carries on with other work.
 Produced by `scripts/hq-numbers.mjs` in this site's repository, run on 2026-10-25.
 It reads the task store, the ledger file and the GitHub API.
 
-| What | Number | How it's counted |
-|---|---|---|
-| Days running | 14 | From the first ledger line, 2026-10-12 |
-| Work orders created | 394 | The newest work order number is T-394 |
-| Done, of the 200 most recent | 136 | Task store, state `done`. Of the rest, 43 were canceled, 12 are blocked, 4 running, 4 queued, 1 waiting on me |
-| Ledger entries | 399 | One line per finished task |
-| Pull requests opened by agents | 135 | Branches named for an agent, across 10 repositories |
-| Pull requests merged | 67 | Merged by me or through the merge gate, not by the agent that opened them |
-| Automated tests in the latest CI run | 762 | 756 passing, 3 failing. The 3 failures are known and being fixed |
+<div className="border-line my-6 overflow-x-auto rounded-sm border">
+<table className="w-full min-w-[34rem] border-collapse text-left text-sm [&_th]:px-3 [&_th]:py-2 [&_th]:font-semibold [&_td]:px-3 [&_td]:py-2 [&_td]:align-top [&_tr]:border-line [&_tr]:border-b [&_tr:last-child]:border-b-0 [&_thead]:bg-surface [&_td]:text-ink/90 [&_code]:bg-surface [&_code]:border-line [&_code]:rounded-sm [&_code]:border [&_code]:px-1 [&_code]:font-mono [&_code]:text-[0.85em]">
+  <thead>
+    <tr><th>What</th><th>Number</th><th>How it's counted</th></tr>
+  </thead>
+  <tbody>
+    <tr><td>Days running</td><td>14</td><td>From the first ledger line, 2026-10-12</td></tr>
+    <tr><td>Work orders created</td><td>394</td><td>The newest work order number is T-394</td></tr>
+    <tr><td>Done, of the 200 most recent</td><td>136</td><td>Task store, state <code>done</code>. Of the rest, 43 were canceled, 12 are blocked, 4 running, 4 queued, 1 waiting on me</td></tr>
+    <tr><td>Ledger entries</td><td>399</td><td>One line per finished task</td></tr>
+    <tr><td>Pull requests opened by agents</td><td>135</td><td>Branches named for an agent, across 10 repositories</td></tr>
+    <tr><td>Pull requests merged</td><td>67</td><td>Merged by me or through the merge gate, not by the agent that opened them</td></tr>
+    <tr><td>Automated tests in the latest CI run</td><td>762</td><td>756 passing, 3 failing. The 3 failures are known and being fixed</td></tr>
+  </tbody>
+</table>
+</div>
 
 Two caveats. The task list returns only the 200 most recent work orders, so the
 done count covers those 200, not all 394. And the 3 failing tests are in that run,
