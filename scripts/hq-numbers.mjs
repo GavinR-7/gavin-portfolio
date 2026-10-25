@@ -8,7 +8,9 @@
  *
  * Sources and definitions:
  *   tasks    `hq.mjs task list --all --json`, grouped by state. The list returns
- *            the work orders still in the store, so `listed` is the denominator.
+ *            only the 200 most recent work orders, so the state counts are of
+ *            those 200 (`listed`). `highestId` is the newest work order number,
+ *            the best available count of orders created.
  *   ledger   lines in hq/LEDGER.md that start with a date.
  *   days     calendar days from 2026-10-12 (first ledger line) to today, inclusive.
  *   prs      pull requests in the repos below whose branch starts with an agent
@@ -48,6 +50,7 @@ const run = (cmd, args, opts = {}) =>
 const tasks = JSON.parse(
   run("node", [join(HQ_DIR, "hq/hq.mjs"), "task", "list", "--all", "--json"]),
 );
+const highestId = Math.max(...tasks.map((t) => Number(t.id)));
 const byState = {};
 for (const t of tasks) byState[t.state] = (byState[t.state] ?? 0) + 1;
 
@@ -106,7 +109,7 @@ console.log(
   JSON.stringify(
     {
       measuredAt: new Date().toISOString(),
-      tasks: { listed: tasks.length, byState },
+      tasks: { listed: tasks.length, highestId, byState },
       ledgerEntries: ledger,
       daysRunning: days,
       since: START,

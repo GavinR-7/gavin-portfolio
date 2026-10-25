@@ -6,7 +6,7 @@ status: building
 role: "Solo: design, build, tests"
 stack: ["Node.js", "SQLite", "tmux", "Claude Code", "OpenAI Codex", "GitHub Actions"]
 summary: A multi-agent operations system that runs my agency work and school planning. A coordinator, four managers, a secretary, a ChatGPT advisor and builders run as long-lived Claude and Codex sessions. Work moves through a SQLite task store with leased claims, and I decide anything involving money, sending or merging.
-outcomeLine: Two weeks running; 136 work orders done and 67 agent pull requests merged, measured by a script.
+outcomeLine: Two weeks running; 389 work orders created and 67 agent pull requests merged, measured by a script.
 publishedAt: 2026-10-14
 caseStudy: true
 featured: true
@@ -65,15 +65,16 @@ It reads the task store, the ledger file and the GitHub API.
 | What | Number | How it's counted |
 |---|---|---|
 | Days running | 14 | From the first ledger line, 2026-10-12 |
-| Work orders done | 136 of 200 listed | Task store, state `done`. 43 more were canceled, 12 are blocked, 4 running, 4 queued, 1 waiting on me |
+| Work orders created | 389 | The newest work order number is T-389 |
+| Done, of the 200 most recent | 136 | Task store, state `done`. Of the rest, 43 were canceled, 12 are blocked, 4 running, 4 queued, 1 waiting on me |
 | Ledger entries | 399 | One line per finished task |
 | Pull requests opened by agents | 135 | Branches named for an agent, across 10 repositories |
 | Pull requests merged | 67 | Merged by me or through the merge gate, not by the agent that opened them |
 | Automated tests in the latest CI run | 762 | 756 passing, 3 failing. The 3 failures are known and being fixed |
 
-Two caveats. The task list returns the 200 work orders still in the store, so the
-denominator is 200, not every order ever created. And the 3 failing tests are in
-that run, not hidden: I'd rather show a suite that is mostly green than one that
+Two caveats. The task list returns only the 200 most recent work orders, so the
+done count covers those 200, not all 389. And the 3 failing tests are in that run,
+not hidden: I'd rather show a suite that is mostly green than one that
 reads as perfect.
 
 ## What I'm not claiming
