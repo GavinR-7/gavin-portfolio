@@ -13,7 +13,7 @@ export type LabEntry = {
 
 /** Stating that they interlock is the systems-thinking signal, so it's said plainly. */
 export const labFraming =
-  "These interlock. The archiver feeds the tutor; Inkline’s output is built to feed it too. I design schemas with their downstream consumers in mind.";
+  "These interlock. The archiver is meant to feed the tutor, and Inkline’s output is designed to feed it too. I design schemas with their downstream consumers in mind.";
 
 export const labEntries: readonly LabEntry[] = [
   {
@@ -26,7 +26,7 @@ export const labEntries: readonly LabEntry[] = [
     title: "ECE Course Tutor",
     status: "design",
     summary:
-      "Retrieval-augmented tutor over archived course material, with citations back to source. Consumes the archiver’s schema.",
+      "Planned: a retrieval-augmented tutor over archived course material, with citations back to source. It would consume the archiver’s schema. No code yet.",
   },
   {
     title: "PDF Reader",
@@ -36,14 +36,14 @@ export const labEntries: readonly LabEntry[] = [
   },
   {
     title: "Inkline",
-    status: "building",
+    status: "design",
     summary:
-      "Handwriting-to-text pipeline with a CER/WER eval harness standing as the release gate.",
+      "Planned: a handwriting-to-text pipeline with a CER/WER eval harness as the release gate. Not started yet.",
   },
   {
     title: "AI legal triage",
-    status: "building",
+    status: "design",
     summary:
-      "Jurisdiction-aware legal information tool. Escalation-recall evals are the release blocker.",
+      "In design: a New York legal information and triage tool, not legal advice. Escalation-recall evals would be the release blocker. No working version yet.",
   },
 ];

@@ -7,8 +7,8 @@ client: John Savoretti Realty
 role: Design & build
 stack: ["Next.js", "TypeScript (strict)", "Tailwind v4", "Vercel"]
 liveUrl: https://john-savoretti-realty.vercel.app/
-summary: Production site for a brokerage with two Long Island offices. Residential, rental and commercial listings share one typed pipeline built on discriminated unions, so invalid state combinations fail to compile rather than reaching the page.
-outcomeLine: Three kinds of listing on one typed pipeline, deploying from a git push.
+summary: Production site for a brokerage with two Long Island offices. Sale, rental and commercial listings share one typed Listing model, with a dealType field that drives pricing, routes and filters.
+outcomeLine: Three kinds of listing on one typed model, deploying from a git push.
 publishedAt: 2026-09-03
 caseStudy: true
 featured: true
@@ -25,10 +25,10 @@ brand.
 The interesting part isn't the office count. It's that a brokerage doesn't sell one
 kind of thing. A house for sale, an apartment for rent and a commercial storefront
 are all "listings," and on the surface they look like the same card in the same
-grid. Underneath they aren't. A rental has a monthly price and a lease term. A sale
-has an asking price and a status that moves through *active → under contract →
-sold*. A commercial space has square footage and a use classification, and "sold"
-may not be the word for what happens to it.
+grid. Underneath they aren't. A rental is priced per month. A sale has an asking
+price and a status that moves through stages like pending. A commercial space is
+described by its square footage, and "sold" may not be the word for what happens to
+it.
 
 Most small brokerage sites solve this by making one listing type with every field
 optional, then hiding the empty ones. That works until someone enters a rental with
@@ -46,33 +46,26 @@ badge on it.
 
 ## Approach and key decisions
 
-### Discriminated unions instead of optional fields
+### One typed Listing model keyed on dealType
 
-The listings model is a discriminated union on `dealType`, with `status` narrowing
-per branch. A residential sale can be `active`, `under-contract` or `sold`. A rental
-can't be any of those — it has its own set. The union means those aren't the same
-type and the compiler knows it.
+Listings come from a Postgres database fed by the MLS data, and every page reads
+them through one typed `Listing` shape. `dealType` is `sale`, `rent` or `commercial`,
+and it decides how a listing is priced (rentals show `/mo`), which route it lives
+on and which filters apply.
 
-The practical effect: a rental carrying a sale-only status isn't a bug that shows up
-on the page, it's a build that doesn't finish. The same goes for reading fields —
-`squareFootage` only exists on the commercial branch, so a component that tries to
-render it for a rental fails at compile time rather than printing `undefined`.
+It is a flat type, not a discriminated union. Fields that only some listings have,
+like `beds`, `squareFeet` and `lotSize`, are optional, and `status` is one shared
+set of values. That was the pragmatic call for feed data, where a row can arrive
+with fields missing. The cost is the one I describe in the writing post: the type
+can't stop a rental from carrying a sale-shaped field, so components guard on
+what's present.
 
-That's the decision I'd defend hardest, because it converts a whole category of
-content mistakes from *runtime* problems into *build-time* ones. The person entering
-listings gets told immediately, by the tooling, instead of finding out from a client
-who saw something wrong.
+### One price formatter
 
-### One typed config, with formatters attached
-
-Office details, hours, headline figures and pricing live in a single typed
-configuration file with formatting helpers — `formatStat`, `formatPrice` — sitting
-next to the values they format.
-
-Keeping the formatter with the data matters more than it sounds. It means a price is
-displayed the same way in a card, in a listing header and in a page title, because
-all three call the same function. When something needs to change, it changes once,
-in the file whose whole job is holding facts. No component contains a business fact.
+`formatPrice` sits next to the `Listing` type and every card, hero and detail page
+calls it, so a price reads the same everywhere and a rental always shows `/mo`.
+Office details and headline figures live in typed data files rather than in the
+components.
 
 ### Routes that match how people actually search
 
@@ -84,8 +77,8 @@ query parameter.
 
 ## Outcome
 
-Three categories of listing run through one typed pipeline. The two offices are one
-site. Content changes touch one config file, not components. Deploys happen from a
+Three categories of listing run through one typed model. The two offices are one
+site. Pricing and office details live in typed data, not in components. Deploys happen from a
 git push through GitHub to Vercel, so publishing a change is a commit rather than an
 event.
 
@@ -99,6 +92,7 @@ until it cuts over. Beyond that, the thing I'd add next is measurement: right no
 can describe what the site does structurally but not what it does commercially, and
 those are different claims.
 
-If I rebuilt it, I'd push the union further — status transitions are still validated
-by types rather than modelled as a state machine, which means the type system knows
-a rental can't be `sold` but doesn't know that `sold` can't go back to `active`.
+If I rebuilt it, I'd turn the flat `Listing` into a discriminated union on `dealType`,
+with `status` per branch, so a rental can't carry a sale-only field or status. The
+tradeoffs are in the writing post. After that, status transitions would be a state
+machine rather than a set of values.
