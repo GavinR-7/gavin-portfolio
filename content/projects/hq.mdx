@@ -4,16 +4,88 @@ slug: hq
 lane: lab
 status: building
 role: "Solo: design, build, tests"
-stack: ["Node.js", "SQLite", "tmux", "Claude Code", "OpenAI Codex"]
-summary: A multi-agent operations system that runs my agency work and school planning. A coordinator, four managers, a secretary and a ChatGPT advisor run as long-lived sessions; work moves through a SQLite store with leased, attempt-bound claims and approvals bound to the hash of one exact action. 500+ automated tests drive stand-in agents through real tmux sessions and a headless browser.
-outcomeLine: Runs every day; a scheduler in plain code writes my plan at 5 a.m. and pushes my phone only when something needs me.
+stack: ["Node.js", "SQLite", "tmux", "Claude Code", "OpenAI Codex", "GitHub Actions"]
+summary: A multi-agent operations system that runs my agency work and school planning. A coordinator, four managers, a secretary, a ChatGPT advisor and builders run as long-lived Claude and Codex sessions. Work moves through a SQLite task store with leased claims, and I decide anything involving money, sending or merging.
+outcomeLine: Two weeks running; 136 work orders done and 67 agent pull requests merged, measured by a script.
 publishedAt: 2026-10-14
-caseStudy: false
+caseStudy: true
 featured: true
 draft: false
 order: 2
 ---
 
-Card only: the code is private because it holds my schedule and business
-records. A write-up of the design (claims, leases, hash-bound approvals, and
-what the independent code reviews kept catching) is planned for /writing.
+## Context
+
+I run a small web practice and I'm a full-time student. The limit on both is my own
+attention, so I built a team of agents to take the planning, building, reviewing and
+reporting, and kept the decisions that carry risk for myself.
+
+The code is private because it holds my schedule and business records. This page is
+the part I can show, and every number on it comes from a script you can read.
+
+## What it is
+
+An agent organization with a clear chain of command. A coordinator (the Boss) takes
+my instructions and hands out work. Four managers own an area each: agency work,
+products, research, and career and school. A secretary writes my daily plan, a
+ChatGPT advisor gives a second opinion, and builder agents on Claude and Codex write
+the code.
+
+The rule that makes it safe to leave running: agents plan, build, review and report,
+and I decide. Spending money, sending anything to a real person, creating accounts
+and merging to main are mine. An agent that needs one of those puts a card in my
+inbox with its recommendation, and carries on with other work.
+
+## How it's built
+
+- **A Node command line and a SQLite task store.** Every work order lives in the
+  store with an owner, a goal, a definition of done and a full history. An agent
+  claims a work order for a 60-minute lease and reports it done, failed, blocked or
+  waiting for my approval. A claim that runs out its lease goes back to the
+  coordinator instead of sitting forever.
+- **Approvals tied to one exact action.** An approval is bound to the specific
+  action it was given for, so a message or a document can't stretch it to cover
+  something else.
+- **A dashboard and an inbox.** What needs me shows up first on a phone-sized page,
+  with the agent's recommendation next to each question.
+- **Claude and Codex lanes.** Claude sessions run the managers and the secretary.
+  Codex handles mechanical code in its own sandbox. Cheaper tools go first: a
+  script before a small model before a large one.
+- **GitHub trains with reviews.** Agents push branches and open pull requests. They
+  can't merge. A continuous-integration job runs the test suite on each pull request
+  and an independent review runs before it reaches me.
+- **A scheduler in plain code.** It writes my plan each morning and only pushes my
+  phone when something needs me.
+
+## Measured numbers
+
+Produced by `scripts/hq-numbers.mjs` in this site's repository, run on 2026-10-25.
+It reads the task store, the ledger file and the GitHub API.
+
+| What | Number | How it's counted |
+|---|---|---|
+| Days running | 14 | From the first ledger line, 2026-10-12 |
+| Work orders done | 136 of 200 listed | Task store, state `done`. 43 more were canceled, 12 are blocked, 4 running, 4 queued, 1 waiting on me |
+| Ledger entries | 399 | One line per finished task |
+| Pull requests opened by agents | 135 | Branches named for an agent, across 10 repositories |
+| Pull requests merged | 67 | Merged by me or through the merge gate, not by the agent that opened them |
+| Automated tests in the latest CI run | 762 | 756 passing, 3 failing. The 3 failures are known and being fixed |
+
+Two caveats. The task list returns the 200 work orders still in the store, so the
+denominator is 200, not every order ever created. And the 3 failing tests are in
+that run, not hidden: I'd rather show a suite that is mostly green than one that
+reads as perfect.
+
+## What I'm not claiming
+
+No revenue, no hours saved and no client results. I haven't measured any of them
+for HQ, and a figure with no recorded before and after is the kind of thing this
+site is meant to refuse. The numbers above are activity, not outcomes: they show
+that the system runs and that its work passes through review, not that it earns.
+
+## What's next
+
+A write-up of the design itself: how claims and leases behave when an agent dies
+mid-task, and what the independent code reviews kept catching. After that, the
+outcome measure I'd want is time from "I asked for it" to "it was merged", recorded
+per task, so the next version of this page can end on a result rather than activity.
