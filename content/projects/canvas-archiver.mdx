@@ -1,0 +1,50 @@
+---
+title: Canvas Archiver
+slug: canvas-archiver
+lane: lab
+status: building
+role: "Solo: design, build, tests"
+stack: ["TypeScript", "React", "WXT", "Chrome Manifest V3", "Vitest"]
+repoUrl: https://github.com/GavinR-7/canvas-archiver
+timeline: Cornell, 2026
+summary: A local first Chrome extension that gives a Cornell student their due dates and course files from Canvas, Gradescope and Ed in one place, with no backend, account or telemetry.
+outcomeLine: "Built and tested, not yet published: 81 commits, 28 pull requests and 492 automated tests across 38 files."
+publishedAt: 2026-11-13
+caseStudy: true
+featured: false
+draft: false
+order: 8
+---
+
+{/* Draft entry (T-1038). Numbers come from canvas-archiver PR #29, docs/resume-bullets.md, run on 87359c1 on 2026-11-13. Re-run its commands before publishing. */}
+
+## Context
+
+Cornell Canvas gives students no API tokens, and my deadlines live in three places: Canvas, Gradescope and Ed. I wanted one list of what is due and one way to save a course's files, without a tool that holds my login or sends my coursework to a server.
+
+## What it is
+
+A Chrome extension that works around the missing tokens by reusing the signed in browser session. It uses a read only, GET only client and has no backend, account or telemetry.
+
+- Merges due dates from Canvas, Gradescope and Ed Discussion into one deduplicated list.
+- Includes an incremental course file archiver (File System Access API, per course manifests) that re-downloads only changed files.
+- Each source fails on its own, so one outage never blanks the rest.
+
+## Security
+
+I hardened it against credential leakage: exact origin checks on server supplied URLs, cookie less file downloads, redirect capped image fetches, and no network from the popup off Canvas. It is covered by 492 automated tests across 38 files, plus type checking and a clean production build.
+
+## Numbers and where they come from
+
+- 81 commits (`git rev-list --count origin/codex/canvas-v2-rc`). This is the whole repo history including the earlier command line tool.
+- 28 pull requests, of which 12 are merged and 16 are open as a stacked series.
+- 492 tests across 38 files (the extension's Vitest suite, run with `npm test`).
+
+## Honest status
+
+No users and no installs yet. The Gradescope, Ed and chat paths are not confirmed on a live account. It is not published.
+
+## Screenshots
+
+[Screenshot placeholder: Upcoming page showing merged due dates]
+[Screenshot placeholder: Files page and the course folder it writes]
