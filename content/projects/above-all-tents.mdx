@@ -7,14 +7,43 @@ client: Above All Tents
 role: Design, build & delivery
 stack: ["Next.js", "TypeScript (strict)", "Tailwind v4", "Vercel"]
 liveUrl: https://abovealltents.com/
-summary: A tent rental business on Long Island. The first site I designed, built, shipped and sold end to end — scoped, delivered and handed over on its own domain.
-outcomeLine: First commercial engagement — scoped, built, delivered and handed over.
+summary: A tent, inflatable and party rental business on Long Island. I designed, built and handed over the site on its own domain, then added layered spam protection to its quote form.
+outcomeLine: "Delivered on the client's own domain, with a guest count tent calculator and a quote form that blocks bot spam without a puzzle for real customers."
 publishedAt: 2026-09-03
-caseStudy: false
+caseStudy: true
 featured: true
 draft: false
 order: 5
 ---
 
-Card-and-link only for now: a full case study needs the story behind the build, and
-that's Gavin's to tell rather than mine to reconstruct. See CONTENT_TODO.
+{/* Draft entry (T-1038). Facts come from deliverables/career/resume-entries-2026-11.md and aat-readme-notes.md (above-all-tents-v2 PRs #2, #6, #7). No outcome numbers: spam before and after figures wait for the corrected Resend report (#335). NAMING QUESTION: the client is named. Gavin has not confirmed Joe and Mike are OK being named. */}
+
+## Context
+
+A tent, inflatable and party rental business on Long Island needed a site that customers could use on a phone to work out what size tent fits their guest count and ask for a quote.
+
+## What I built
+
+- A five page mobile first site: tents, inflatables, mechanical bull, tables and chairs, and contact.
+- A tent sizing calculator built from the client's own rules: one round table per 100 sq ft and 10 chairs per table, combining tents above 80 guests.
+- All content (copy, photos, phone numbers, inventory and the sizing chart) in one typed data file, so changing a price or phone number is a data edit, not a code change. Items with no price show "Call for pricing".
+- Built with Next.js 15 (App Router), TypeScript and Tailwind CSS v4, and handed over on the client's own domain.
+
+## Spam protection on the quote form
+
+I added layered protection in two reviewed pull requests:
+
+- A hidden honeypot field and a 1.5 second minimum fill time trap. Both drop a submission silently.
+- A reCAPTCHA v2 checkbox, checked on the server.
+- All checks run on the server, so the browser is never trusted.
+- Dropped submissions log a reason and a timestamp only, never the form contents.
+- A graceful fallback: if the captcha keys are unset or Google is unreachable, real leads still get through.
+
+## Status and honesty
+
+Both pull requests are merged. I have no measured spam reduction yet, so this page makes no claim about how much spam was blocked. Before and after figures will be added after a corrected Resend report. No traffic or conversion numbers are claimed.
+
+## Screenshots
+
+[Screenshot placeholder: Tent sizing calculator on a phone]
+[Screenshot placeholder: Quote form with the captcha checkbox]

@@ -4,16 +4,62 @@ slug: hq
 lane: lab
 status: building
 role: "Solo: design, build, tests"
-stack: ["Node.js", "SQLite", "tmux", "Claude Code", "OpenAI Codex"]
-summary: A multi-agent operations system that runs my agency work and school planning. A coordinator, four managers, a secretary and a ChatGPT advisor run as long-lived sessions; work moves through a SQLite store with leased, attempt-bound claims and approvals bound to the hash of one exact action. 120+ automated tests drive stand-in agents through real tmux sessions and a headless browser.
-outcomeLine: Runs every day; a scheduler in plain code writes my plan at 5 a.m. and pushes my phone only when something needs me.
+stack: ["Node.js", "SQLite", "tmux", "Claude Code", "OpenAI Codex", "GitHub Actions"]
+timeline: "2026"
+summary: A multi-agent operating system I built to run my web-and-AI agency, my coursework and my job search. Every piece of work is a tracked work order, every risky action needs a gate or my approval, and every finished thing lands as a file I can open.
+outcomeLine: "29 agents, 153+ work orders completed and 215 pull requests merged across 8 repos in 30 days, with limits enforced in code."
 publishedAt: 2026-10-14
-caseStudy: false
+caseStudy: true
 featured: true
 draft: false
 order: 2
 ---
 
-Card only: the code is private because it holds my schedule and business
-records. A write-up of the design (claims, leases, hash-bound approvals, and
-what the independent code reviews kept catching) is planned for /writing.
+{/* Draft entry (T-1038). Numbers come from deliverables/career/hq-metrics.md in the HQ repo (generated 2026-11-14, window since 2026-10-15) and hq-portfolio-draft.md. Re-run node ~/gavin-data/deliverables/career/hq-metrics.mjs before publishing: the counts move daily. */}
+
+## Context
+
+I run Embedded Intent, which builds websites and AI automation for local service businesses, and I am a Cornell ECE student. There is more work than one person can do, and chat based AI loses things: decisions vanish, work gets duplicated, and nobody knows what is safe to merge or send. I wanted agents that could do real work with an audit trail and hard limits on what they may touch.
+
+The code is private because it holds my schedule and business records. This page is the part I can show.
+
+## What it does
+
+- Splits my work into areas (agency, school, research and memory, AI videos, jobs, coding), each run by a manager agent with specialists under it.
+- Turns every request into a work order with a goal, a done-when and an owner. Agents claim it, report with evidence, and the result is logged.
+- Puts anything that needs my judgment (money, anything sent to a real person, merges to main) in my inbox as a card with the exact steps and the agent's recommendation.
+- Keeps long term memory in a plain Markdown vault so context survives a session ending.
+
+## How it is built
+
+- **Task store.** A SQLite database of work orders, claims, approvals and history. Claims are 60 minute leases that expire into "interrupted". Agents change it only through a command line tool, never directly.
+- **Work levels.** Four settings (off, low, normal, high) decide which agents may run, on which model, and how many work orders can be in flight. It is enforced in code at claim time, and only I can raise it.
+- **Permissions.** Routine actions pass a safety classifier. Hard rules (no push to main, no production deploys, no editing HQ's own code or settings) are denied in every mode. Sending email, spending money and approving a task always reach me.
+- **The merge gate.** A GitHub Actions workflow merges a pull request only when tests pass, a second AI model's review is clean on the exact head commit, review threads are resolved, a human applied the approved label, and no protected path is touched. A human applies one label and CI does the merge. Agents do not merge on their own.
+- **Cross model review.** OpenAI Codex reviews each pull request. A watcher script only reads GitHub, checks that the receipt comes from the trusted bot on the current commit, and classifies it clean, findings, pending, stale or missing.
+- **Tests.** A Node test suite for HQ's own code: 95 test files and 1,275 declared test cases, counted from test declarations, not from a test run.
+
+## Results
+
+- 29 agents (25 Claude, 4 other) in a Boss, managers, specialists tree.
+- At least 153 work orders completed in the last 30 days. That is a lower bound, because the task list shows only its newest 200.
+- 215 pull requests merged across 8 repositories in the last 30 days, 158 of them in the main HQ repo.
+- Of the pull requests merged in the main repo since 2026-10-15, CI merged 27 after my one label approval and I merged 131 by hand. The gate handles a minority of merges today.
+
+## Lessons
+
+- **Mechanical work belongs in a script, not a model.** If it can be scripted, I script it and run it for free. AI is for judgment and writing.
+- **Verify with a different source.** A second model reviewing the first catches what self review does not.
+- **Put limits in code, not in prompts.** Work order caps, protected paths and permission denials are enforced by the system, so a confused agent cannot talk its way past them.
+- **A correction is only closed when it becomes a change** (a rule, a test or a lint), not a promise to do better.
+
+## Screenshots
+
+Placeholders. Gavin takes these, blurring client names, phone numbers, emails and keys.
+
+- [Screenshot placeholder: Dashboard, Today page]
+- [Screenshot placeholder: Task list]
+- [Screenshot placeholder: One work order in full]
+- [Screenshot placeholder: Agent roster]
+- [Screenshot placeholder: The merge gate on a real PR]
+- [Screenshot placeholder: Auto-merge workflow file]
